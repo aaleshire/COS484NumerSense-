@@ -1,9 +1,6 @@
 import json
 import sys
 
-# filepath = "gpt.test.results.jsonl"
-# truth_file = "new-test-masked.tsv"
-
 filepath = sys.argv[1]
 truth_file = sys.argv[2]
 
