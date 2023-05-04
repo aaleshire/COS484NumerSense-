@@ -188,10 +188,10 @@ def mask_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> T
     # We sample a few tokens in each sequence for masked-LM training (with probability args.mlm_probability defaults to 0.15 in Bert/RoBERTa)
     
     # CHANGING THIS
-    # probability_matrix = torch.full(labels.shape, args.mlm_probability)
+    probability_matrix = torch.full(labels.shape, 1) # <-- mlm prob was the 15%
 
-    mask_tokens = ["[MASK]", "no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-    probability_matrix = torch.tensor([[1.0 if token in mask_tokens else 0.0 for token in sentence] for sentence in labels.tolist()], dtype=torch.float)
+    # mask_tokens = ["[MASK]", "no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+    # probability_matrix = torch.tensor([[1.0 if token in mask_tokens else 0.0 for token in sentence] for sentence in labels.tolist()], dtype=torch.float)
 
     special_tokens_mask = [
         tokenizer.get_special_tokens_mask(val, already_has_special_tokens=True) for val in labels.tolist()
