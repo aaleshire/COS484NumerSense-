@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Read the data from the file
-data = pd.read_csv('new-train-masked.tsv', sep='\t', header=None, names=['sentence', 'truthWord'])
+data = pd.read_csv('old-data/test_gkb_best_filtered.tsv', sep='\t', header=None, names=['sentence', 'truthWord'])
 
 # Calculate the distribution of truthWords
 truthWord_counts = data['truthWord'].value_counts()
@@ -22,10 +22,10 @@ plt.figure(figsize=(10, 6))
 plt.bar(ordered_counts.index, ordered_counts.values, color=colors)
 plt.xlabel('Truth Word')
 plt.ylabel('# of Examples')
-plt.title('Distribution of Truth Words in the Train Data')
+plt.title('Distribution of Truth Words in the Training Data (gkb_best_filtered.txt)')
 
 # Save the plot as an image file
-plt.savefig('truthWord_Train.png')
+plt.savefig('truthWord_TestSet.png')
 
 # Show the plot
 plt.show()
