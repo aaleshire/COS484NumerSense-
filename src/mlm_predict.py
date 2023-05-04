@@ -1,6 +1,8 @@
 from happytransformer import HappyXLNET
 from happytransformer import HappyROBERTA
 from happytransformer import HappyBERT
+from happytransformer import HappyALBERT
+from happytransformer import HappyDISTILBERT
 from tqdm import tqdm
 import sys
 import json
