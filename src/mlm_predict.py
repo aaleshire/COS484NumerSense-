@@ -1,7 +1,6 @@
 from happytransformer import HappyXLNET
 from happytransformer import HappyROBERTA
 from happytransformer import HappyBERT
-from happytransformer import HappyWordPrediction
 from tqdm import tqdm
 import sys
 import json
