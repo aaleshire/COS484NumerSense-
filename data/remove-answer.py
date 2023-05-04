@@ -1,5 +1,5 @@
-input_file = 'new-train-masked.tsv'
-output_file = 'new-train-truthword-removed.txt'
+input_file = 'old-data/validation.masked.tsv'
+output_file = 'old-data/validation.masked.answer.removed.txt'
 
 with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
     for line in infile:
