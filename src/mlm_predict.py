@@ -1,8 +1,7 @@
 from happytransformer import HappyXLNET
 from happytransformer import HappyROBERTA
 from happytransformer import HappyBERT
-from happytransformer import HappyALBERT
-from happytransformer import HappyDISTILBERT
+from happytransformer import HappyWordPrediction
 from tqdm import tqdm
 import sys
 import json
@@ -31,6 +30,8 @@ if __name__ == "__main__":
         elif model_str.startswith("xlnet"):
             # ignore
             model = HappyXLNET(model_str+"-cased")
+        elif model_str.startswith("albert"):
+            model = HappyWordPrediction("ALBERT", "albert-base-v2")
     assert model is not None
 
     with open(input_filename) as f:
