@@ -188,7 +188,7 @@ def mask_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> T
     # We sample a few tokens in each sequence for masked-LM training (with probability args.mlm_probability defaults to 0.15 in Bert/RoBERTa)
     probability_matrix = torch.full(labels.shape, args.mlm_probability)
     special_tokens_mask = [
-        tokenizer.get_special_tokens_mask(val, already_has_special_tokens=True) for val in labels.tolist()
+        tokenizer.get_special_tokens_mask(val, already_has_special_tokens=False) for val in labels.tolist()
     ]
     probability_matrix.masked_fill_(torch.tensor(special_tokens_mask, dtype=torch.bool), value=0.0)
     if tokenizer._pad_token is not None:
