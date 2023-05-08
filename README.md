@@ -16,23 +16,52 @@ Code & Data for EMNLP 2020 paper:
 ```
 
 ## Installation 
-
 ```bash
-conda create -n numersense python=3.7
-conda activate numersense
-# install torch seperately at https://pytorch.org/get-started/locally/ if needed
-conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch -n numersense
-pip install transformers==3.3.1
-# pip install happytransformer -U
-pip install --editable happy-transformer
-pip install tensorboardX
-mkdir pred_results
+/**************************************/
+            INSTALL CONDA
+/**************************************/
+wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh
+chmod +x Miniconda3-py37_4.12.0-Linux-x86_64.sh
+bash ./Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -f -p /usr/local/
 
-# Optional:
-# Install apex following https://github.com/NVIDIA/apex#linux
-git clone https://github.com/NVIDIA/apex
-cd apex
-pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+conda install --channel defaults conda python=3.7 -y
+conda update -n base -c defaults conda -y
+conda create -n numersense python=3.7 -y
+
+
+/**************************************/
+        CONDA START ENVIRONMENT 
+/**************************************/
+sudo ln -s /opt/conda/root/etc/profile.d/conda.sh /etc/profile.d/conda.s 
+eval "$(/usr/local/condabin/conda shell.bash hook)"
+conda init bash
+conda activate numersense
+
+
+/**************************************/
+            CLONE INTO REPO 
+/**************************************/
+git clone https://github.com/aaleshire/COS484NumerSense-
+cd COS484NumerSense-
+git checkout redo 
+
+
+/**************************************/
+          INSTALLATIONS NEEDED 
+/**************************************/
+conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch -y
+
+pip install transformers==3.3.1
+pip install --editable happy-transformer
+pip install happy-transformer
+pip install tensorboardX
+
+
+/**************************************/
+        GITHUB CONFIGURATIONS 
+/**************************************/
+git config --global user.email "aleshire@princeton.edu"
+git config --global user.name "Abby Aleshire"
 ```
 
 ## Probing Experiments 
