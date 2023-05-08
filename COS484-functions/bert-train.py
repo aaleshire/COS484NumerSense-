@@ -1,21 +1,12 @@
-from typing import Tuple
 import argparse
+import os
 import torch
-from transformers import (
-    BertTokenizerFast,
-    LineByLineTextDataset,
-    BertForMaskedLM,
-    Trainer,
-    TrainingArguments,
-)
-from transformers import AutoTokenizer, AutoModelForMaskedLM
+from transformers import BertTokenizerFast, BertForMaskedLM, LineByLineTextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments
+from typing import Tuple
 
-tokenizer = AutoTokenizer.from_pretrained("ashraq/bert-random-weights")
 
-model = AutoModelForMaskedLM.from_pretrained("ashraq/bert-random-weights")
-
-def mask_tokens(inputs: torch.Tensor, tokenizer: AutoTokenizer) -> Tuple[torch.Tensor, torch.Tensor]:
-    """ Prepare masked tokens inputs/labels for masked language modeling: mask number words. """
+def mask_tokens(inputs: torch.Tensor, tokenizer: BertTokenizerFast) -> Tuple[torch.Tensor, torch.Tensor]:
+    """ Prepare masked tokens inputs/labels for masked language modeling: mask numerical words. """
     num_list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "no", "zero"]
     if tokenizer.mask_token is None:
         raise ValueError(
@@ -40,46 +31,64 @@ def mask_tokens(inputs: torch.Tensor, tokenizer: AutoTokenizer) -> Tuple[torch.T
     return inputs, labels
 
 
-# Argument parser setup
-parser = argparse.ArgumentParser()
-parser.add_argument("--output_dir", type=str, required=True)
-parser.add_argument("--overwrite_output_dir", action="store_true")
-parser.add_argument("--model_type", type=str, default="bert")
-parser.add_argument("--model_name_or_path", type=str, default="ashraq/bert-random-weights")
-parser.add_argument("--do_train", action="store_true")
-parser.add_argument("--train_data_file", type=str, required=True)
-parser.add_argument("--per_gpu_train_batch_size", type=int, default=64)
-parser.add_argument("--block_size", type=int, default=64)
-parser.add_argument("--logging_steps", type=int, default=100)
-parser.add_argument("--num_train_epochs", type=int, default=3)
-parser.add_argument("--line_by_line", action="store_true")
-args = parser.parse_args()
+def main():
+    # Setup argument parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output_dir", type=str, required=True)
+    parser.add_argument("--overwrite_output_dir", action="store_true")
+    parser.add_argument("--model_type", type=str, default="bert")
+    parser.add_argument("--model_name_or_path", type=str, default="ashraq/bert-random-weights")
+    parser.add_argument("--do_train", action="store_true")
+    parser.add_argument("--train_data_file", type=str, required=True)
+    parser.add_argument("--per_gpu_train_batch_size", type=int, default=64)
+    parser.add_argument("--block_size", type=int, default=64)
+    parser.add_argument("--logging_steps", type=int, default=100)
+    parser.add_argument("--num_train_epochs", type=int, default=3)
+    parser.add_argument("--line_by_line", action="store_true")
+    args = parser.parse_args()
 
+    # Load the tokenizer and model
+    tokenizer = BertTokenizerFast.from_pretrained(args.model_name_or_path)
+    model = BertForMaskedLM.from_pretrained(args.model_name_or_path)
 
-if args.line_by_line:
-    train_dataset = LineByLineTextDataset(
-        tokenizer=tokenizer,
-        file_path=args.train_data_file,
-        block_size=args.block_size,
+    # Load the text file into a dataset
+    if args.line_by_line:
+        train_dataset = LineByLineTextDataset(
+            tokenizer=tokenizer,
+            file_path=args.train_data_file,
+            block_size=args.block_size,
+        )
+    else:
+        raise NotImplementedError
+
+    # Define a data collator for language modeling
+    data_collator = DataCollatorForLanguageModeling(
+        tokenizer=tokenizer, mlm=True, mlm_probability=1.0, mask_token=tokenizer.mask_token, mask_token_id=tokenizer.mask_token_id,
+        masking_function=mask_tokens
     )
-else:
-    raise NotImplementedError
 
-# Train with custom mask_tokens function
-trainer = Trainer(
-    model=model,
-    args=TrainingArguments(
+    # Define the training arguments
+    training_args = TrainingArguments(
         output_dir=args.output_dir,
         overwrite_output_dir=args.overwrite_output_dir,
         num_train_epochs=args.num_train_epochs,
-        per_gpu_train_batch_size=args.per_gpu_train_batch_size,
+        per_device_train_batch_size=args.per_gpu_train_batch_size,
         logging_steps=args.logging_steps,
-    ),
-    train_dataset=train_dataset.map(
-        lambda x: mask_tokens(x['input_ids'], tokenizer)),
-)
+        save_steps=args.logging_steps,
+        evaluation_strategy="steps",
+        eval_steps=args.logging_steps,
+    )
 
-trainer.train()
+    # Define the trainer
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        data_collator=data_collator,
+        tokenizer=tokenizer,
+    )
 
-# Save the trained model to the output directory
-trainer.save_model(args.output_dir)
+    # Train the model
+    if args.do_train:
+        trainer.train()
+        trainer.save_model(args.output_dir)
