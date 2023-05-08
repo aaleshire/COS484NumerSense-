@@ -106,88 +106,40 @@ repeat for COS484-results/bert-base.validation.results.jsonl, COS484-results/rob
 ### Fine-tune a MLM model 
 ```bash
 mkdir saved_models
+
+BERT-Large:
 CUDA_VISIBLE_DEVICES=0 python src/finetune_mlm.py \
   --output_dir=saved_models/finetuned_bert_large --overwrite_output_dir \
   --model_type=bert \
   --model_name_or_path=bert-large-uncased \
   --do_train \
-  --train_data_file=data/gkb_best_filtered.txt  \
-  --do_eval \
-  --eval_data_file=data/wiki_complete.txt \
+  --train_data_file=COS484-data/gkb_best_filtered.txt  \
   --per_gpu_train_batch_size 64 \
-  --per_gpu_eval_batch_size 64 \
   --block_size 64 \
   --logging_steps 100 \
   --num_train_epochs 3 \
   --line_by_line --mlm 
-```
 
-```bash 
-python src/mlm_infer.py \
+python  src/mlm_predict.py \
         reload_bert:saved_models/finetuned_bert_large \
-        data/test.core.masked.txt \
-        results/test.core.output.jsonl
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/bert-large.finetune.validation.results
+
+RoBERTa-Large:
+CUDA_VISIBLE_DEVICES=0 python src/finetune_mlm.py \
+  --output_dir=saved_models/finetuned_roberta_large --overwrite_output_dir \
+  --model_type=roberta \
+  --model_name_or_path=roberta-large \
+  --do_train \
+  --train_data_file=COS484-data/gkb_best_filtered.txt  \
+  --per_gpu_train_batch_size 64 \
+  --block_size 64 \
+  --logging_steps 100 \
+  --num_train_epochs 3 \
+  --line_by_line --mlm 
+
+python  src/mlm_predict.py \
+        reload_bert:saved_models/finetuned_roberta_large \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/roberta-large.finetune.validation.results
 ```
-
-## Evaluation on Test Set
-
-To evaluate your model's ability on NumerSense's official test sets,
-please submit a prediction file to *yuchen.lin@usc.edu*, which should contain a json line for each probe example. And a json line should follow the format in the below code snippet. You can also check the example, `results/bert-base.test.core.output.jsonl` , which is the predictions of BERT-base on core set.
-The `score` key is optional.
-When submitting your predictions, please submit both `core` and `all` results, and inform us whether you have used the training data for fine-tuning. Thanks!
-The evaluation script we will use is `src/evaluator.py`.
- ```json
-{
-  "probe": "a bird has <mask> legs.",
-  "result_list": [
-    {
-      "word": "four",
-      "score": 0.23623309
-    },
-    {
-      "word": "two",
-      "score": 0.21001829
-    },
-    {
-      "word": "three",
-      "score": 0.1258428
-    },
-    {
-      "word": "no",
-      "score": 0.0688955
-    },
-    {
-      "word": "six",
-      "score": 0.0639159
-    },
-    {
-      "word": "five",
-      "score": 0.061465383
-    },
-    {
-      "word": "eight",
-      "score": 0.038915534
-    },
-    {
-      "word": "seven",
-      "score": 0.014524153
-    },
-    {
-      "word": "ten",
-      "score": 0.010337788
-    },
-    {
-      "word": "nine",
-      "score": 0.005654324
-    },
-    {
-      "word": "one",
-      "score": 1.3131318E-4
-    },
-    {
-      "word": "zero",
-      "score": 1.10984496E-4
-    }
-  ]
-}
- ```
