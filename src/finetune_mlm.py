@@ -49,7 +49,6 @@ from transformers import (
     get_linear_schedule_with_warmup,
 )
 
-
 try:
     from torch.utils.tensorboard import SummaryWriter
 except ImportError:
@@ -188,7 +187,7 @@ def mask_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> T
     # We sample a few tokens in each sequence for masked-LM training (with probability args.mlm_probability defaults to 0.15 in Bert/RoBERTa)
     probability_matrix = torch.full(labels.shape, args.mlm_probability)
     special_tokens_mask = [
-        tokenizer.get_special_tokens_mask(val, already_has_special_tokens=False) for val in labels.tolist()
+        tokenizer.get_special_tokens_mask(val, already_has_special_tokens=True) for val in labels.tolist()
     ]
     probability_matrix.masked_fill_(torch.tensor(special_tokens_mask, dtype=torch.bool), value=0.0)
     if tokenizer._pad_token is not None:
@@ -213,7 +212,6 @@ def mask_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> T
 def mask_num_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) -> Tuple[torch.Tensor, torch.Tensor]:
     """ Prepare masked tokens inputs/labels for masked language modeling: 80% MASK, 10% random, 10% original. """
     num_list = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "no", "zero"]
-
     if tokenizer.mask_token is None:
         raise ValueError(
             "This tokenizer does not have a mask token which is necessary for masked language modeling. Remove the --mlm flag if you want to use this tokenizer."
@@ -237,6 +235,7 @@ def mask_num_tokens(inputs: torch.Tensor, tokenizer: PreTrainedTokenizer, args) 
     masked_indices = torch.BoolTensor(masked_indices)
     labels[~masked_indices] = -100  # We only compute loss on masked tokens
     inputs[masked_indices] = tokenizer.convert_tokens_to_ids(tokenizer.mask_token)
+
     return inputs, labels
 
 
@@ -725,6 +724,7 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, cache_dir=args.cache_dir)
     elif args.model_name_or_path:
         tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
+        
     else:
         raise ValueError(
             "You are instantiating a new tokenizer from scratch. This is not supported, but you can do it from another script, save it,"
