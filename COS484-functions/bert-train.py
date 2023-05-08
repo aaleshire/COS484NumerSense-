@@ -43,7 +43,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", type=str, required=True)
 parser.add_argument("--overwrite_output_dir", action="store_true")
 parser.add_argument("--model_type", type=str, default="bert")
-parser.add_argument("--model_name_or_path", type=str, default="princeton-nlp/unsup-simcse-roberta-base")
+parser.add_argument("--model_name_or_path", type=str, default="ashraq/bert-random-weights")
 parser.add_argument("--do_train", action="store_true")
 parser.add_argument("--train_data_file", type=str, required=True)
 parser.add_argument("--per_gpu_train_batch_size", type=int, default=64)
@@ -53,7 +53,7 @@ parser.add_argument("--num_train_epochs", type=int, default=3)
 parser.add_argument("--line_by_line", action="store_true")
 args = parser.parse_args()
 
-tokenizer = AutoTokenizer.from_pretrained("princeton-nlp/unsup-simcse-roberta-base")
+tokenizer = AutoTokenizer.from_pretrained("ashraq/bert-random-weights")
 
 
 if args.line_by_line:
@@ -65,7 +65,7 @@ if args.line_by_line:
 else:
     raise NotImplementedError
 
-model = AutoModel.from_pretrained("princeton-nlp/unsup-simcse-roberta-base")
+model = AutoModel.from_pretrained("ashraq/bert-random-weights")
 
 # Train with custom mask_tokens function
 trainer = Trainer(
