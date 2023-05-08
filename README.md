@@ -156,17 +156,24 @@ python  src/mlm_predict.py \
 
 ## Evaluating
 ```bash
+GPT-2:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/gpt.validation.results.jsonl
 
+BERT-Base:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/bert-base.validation.results.jsonl
 
+RoBERTa-Base:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-base.validation.results.jsonl
 
+BERT-Large:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/bert-large.validation.results.jsonl
 
+RoBERTa-Large:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-large.validation.results.jsonl
 
+BERT-Large-Finetuned:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/bert-large.finetune.validation.results
 
+RoBERTa-Large-Finetuned:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-large.finetune.validation.results
 ```
