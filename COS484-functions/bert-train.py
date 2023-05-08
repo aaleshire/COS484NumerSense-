@@ -10,6 +10,7 @@ from transformers import (
 )
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModel
 
 def mask_tokens(inputs: torch.Tensor, tokenizer: AutoTokenizer) -> Tuple[torch.Tensor, torch.Tensor]:
     """ Prepare masked tokens inputs/labels for masked language modeling: mask number words. """
@@ -52,7 +53,8 @@ parser.add_argument("--num_train_epochs", type=int, default=3)
 parser.add_argument("--line_by_line", action="store_true")
 args = parser.parse_args()
 
-tokenizer = AutoTokenizer.from_pretrained("EhsanAghazadeh/bert-base-uncased-random-weights-S42")
+tokenizer = AutoTokenizer.from_pretrained("EhsanAghazadeh/bert-base-uncased-random-weights")
+
 
 if args.line_by_line:
     train_dataset = LineByLineTextDataset(
@@ -63,7 +65,7 @@ if args.line_by_line:
 else:
     raise NotImplementedError
 
-model = AutoModelForSequenceClassification.from_pretrained("EhsanAghazadeh/bert-base-uncased-random-weights-S42")
+model = AutoModel.from_pretrained("EhsanAghazadeh/bert-base-uncased-random-weights")
 
 # Train with custom mask_tokens function
 trainer = Trainer(
