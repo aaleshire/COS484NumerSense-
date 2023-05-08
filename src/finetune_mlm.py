@@ -47,8 +47,8 @@ from transformers import (
     PreTrainedModel,
     PreTrainedTokenizer,
     get_linear_schedule_with_warmup,
+    AutoModelForSequenceClassification,
 )
-
 
 try:
     from torch.utils.tensorboard import SummaryWriter
@@ -709,44 +709,50 @@ def main():
     if args.local_rank not in [-1, 0]:
         torch.distributed.barrier()  # Barrier to make sure only the first process in distributed training download model & vocab
 
-    if args.config_name:
-        config = AutoConfig.from_pretrained(args.config_name, cache_dir=args.cache_dir)
-    elif args.model_name_or_path:
-        config = AutoConfig.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
-    else:
-        # When we release a pip version exposing CONFIG_MAPPING,
-        # we can do `config = CONFIG_MAPPING[args.model_type]()`.
-        raise ValueError(
-            "You are instantiating a new config instance from scratch. This is not supported, but you can do it from another script, save it,"
-            "and load it from here, using --config_name"
-        )
 
-    if args.tokenizer_name:
-        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, cache_dir=args.cache_dir)
-    elif args.model_name_or_path:
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
-    else:
-        raise ValueError(
-            "You are instantiating a new tokenizer from scratch. This is not supported, but you can do it from another script, save it,"
-            "and load it from here, using --tokenizer_name"
-        )
+    # Testing uninitialized now
+    tokenizer = AutoTokenizer.from_pretrained("EhsanAghazadeh/bert-base-uncased-random-weights-S42")
+    model = AutoModelForSequenceClassification.from_pretrained("EhsanAghazadeh/bert-base-uncased-random-weights-S42")
 
-    if args.block_size <= 0:
-        args.block_size = tokenizer.max_len
-        # Our input block size will be the max possible for the model
-    else:
-        args.block_size = min(args.block_size, tokenizer.max_len)
+    # if args.config_name:
+    #     config = AutoConfig.from_pretrained(args.config_name, cache_dir=args.cache_dir)
+    # elif args.model_name_or_path:
+    #     config = AutoConfig.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
+    # else:
+    #     # When we release a pip version exposing CONFIG_MAPPING,
+    #     # we can do `config = CONFIG_MAPPING[args.model_type]()`.
+    #     raise ValueError(
+    #         "You are instantiating a new config instance from scratch. This is not supported, but you can do it from another script, save it,"
+    #         "and load it from here, using --config_name"
+    #     )
 
-    if args.model_name_or_path:
-        model = AutoModelWithLMHead.from_pretrained(
-            args.model_name_or_path,
-            from_tf=bool(".ckpt" in args.model_name_or_path),
-            config=config,
-            cache_dir=args.cache_dir,
-        )
-    else:
-        logger.info("Training new model from scratch")
-        model = AutoModelWithLMHead.from_config(config)
+    # if args.tokenizer_name:
+    #     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, cache_dir=args.cache_dir)
+    # elif args.model_name_or_path:
+    #     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
+        
+    # else:
+    #     raise ValueError(
+    #         "You are instantiating a new tokenizer from scratch. This is not supported, but you can do it from another script, save it,"
+    #         "and load it from here, using --tokenizer_name"
+    #     )
+
+    # if args.block_size <= 0:
+    #     args.block_size = tokenizer.max_len
+    #     # Our input block size will be the max possible for the model
+    # else:
+    #     args.block_size = min(args.block_size, tokenizer.max_len)
+
+    # if args.model_name_or_path:
+    #     model = AutoModelWithLMHead.from_pretrained(
+    #         args.model_name_or_path,
+    #         from_tf=bool(".ckpt" in args.model_name_or_path),
+    #         config=config,
+    #         cache_dir=args.cache_dir,
+    #     )
+    # else:
+    #     logger.info("Training new model from scratch")
+    #     model = AutoModelWithLMHead.from_config(config)
 
     model.to(args.device)
 
