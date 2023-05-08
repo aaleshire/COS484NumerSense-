@@ -109,7 +109,6 @@ class HappyTransformer:
 
         if options is not None:
             
-            print(self.model_name)
             if self.model_name == "BERT":
                 option_ids = [self.tokenizer.encode(option) for option in options]
 
