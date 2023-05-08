@@ -1,7 +1,8 @@
 import json
+import sys
 
-filepath = sys.argv[1]
-truth_file = sys.argv[2]
+truth_file = sys.argv[1]
+filepath = sys.argv[2]
 
 truth_dict = {}
 with open(truth_file) as f:

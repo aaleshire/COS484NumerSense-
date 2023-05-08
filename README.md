@@ -68,13 +68,30 @@ git config --global user.name "Abby Aleshire"
 
 For masked language models:
 ```bash
-python src/mlm_predict.py bert-base \
-        data/test.core.masked.txt \
-        results/bert-base.test.core.output.jsonl
+GPT-2:
+python  src/gpt_predict.py gpt \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/gpt.validation.results.jsonl 
 
-python src/mlm_predict.py bert-base \
-        data/test.all.masked.txt \
-        results/bert-base.test.all.output.jsonl
+BERT-Base
+python  src/mlm_predict.py bert-base \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/bert-base.validation.results.jsonl
+
+RoBERTa-Base
+python  src/mlm_predict.py roberta-base \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/roberta-base.validation.results.jsonl 
+
+BERT-Large
+python  src/mlm_predict.py bert-large \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/bert-large.validation.results.jsonl 
+
+RoBERTa-Large
+python  src/mlm_predict.py roberta-large \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/roberta-large.validation.results.jsonl 
 ```
 
 Note that `bert-base` can be replaced by any model name in `[bert-base, bert-large, roberta-base, roberta-large]`.
@@ -85,6 +102,20 @@ python src/gpt_predict.py gpt \
         data/test.core.masked.txt \
         results/gpt.test.core.output.jsonl 
 ```
+
+## Evaluating 
+
+```bash
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/gpt.validation.results.jsonl
+
+repeat for COS484-results/bert-base.validation.results.jsonl,
+repeat for COS484-results/roberta-base.validation.results.jsonl,
+repeat for COS484-results/bert-large.validation.results.jsonl,
+repeat for COS484-results/roberta-large.validation.results.jsonl
+```
+
 
 ### Fine-tune a MLM model 
 ```bash
