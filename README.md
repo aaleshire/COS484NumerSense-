@@ -100,10 +100,7 @@ python  COS484-functions/evaluator.py
         COS484-data/validation.masked.tsv 
         COS484-results/gpt.validation.results.jsonl
 ```
-repeat for COS484-results/bert-base.validation.results.jsonl,
-repeat for COS484-results/roberta-base.validation.results.jsonl,
-repeat for COS484-results/bert-large.validation.results.jsonl,
-repeat for COS484-results/roberta-large.validation.results.jsonl
+repeat for COS484-results/bert-base.validation.results.jsonl, COS484-results/roberta-base.validation.results.jsonl, COS484-results/bert-large.validation.results.jsonl, and COS484-results/roberta-large.validation.results.jsonl
 
 
 ### Fine-tune a MLM model 
