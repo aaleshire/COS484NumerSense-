@@ -139,7 +139,26 @@ CUDA_VISIBLE_DEVICES=0 python src/finetune_mlm.py \
   --line_by_line --mlm 
 
 python  src/mlm_predict.py \
-        reload_bert:saved_models/finetuned_roberta_large \
+        reload_roberta:saved_models/finetuned_roberta_large \
         COS484-data/validation.masked.removed.txt \
         COS484-results/roberta-large.finetune.validation.results
+
+Unitialized BERT:
+CUDA_VISIBLE_DEVICES=0 python src/finetune_mlm.py \
+  --output_dir=saved_models/uninit-bert --overwrite_output_dir \
+  --model_type=bert \
+  --model_name_or_path=EhsanAghazadeh/bert-base-uncased-random-weights-S42 \
+  --do_train \
+  --train_data_file=COS484-data/gkb_best_filtered.txt  \
+  --per_gpu_train_batch_size 64 \
+  --block_size 64 \
+  --logging_steps 100 \
+  --num_train_epochs 3 \
+  --line_by_line --mlm 
+
+python  src/mlm_predict.py \
+        reload_bert:saved_models/uninit-bert \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/uninit-bert.finetune.validation.results
+
 ```
