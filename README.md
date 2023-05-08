@@ -66,41 +66,31 @@ git config --global user.name "Abby Aleshire"
 
 ## Probing Experiments 
 
-For masked language models:
 ```bash
 GPT-2:
 python  src/gpt_predict.py gpt \
         COS484-data/validation.masked.removed.txt \
         COS484-results/gpt.validation.results.jsonl 
 
-BERT-Base
+BERT-Base:
 python  src/mlm_predict.py bert-base \
         COS484-data/validation.masked.removed.txt \
         COS484-results/bert-base.validation.results.jsonl
 
-RoBERTa-Base
+RoBERTa-Base:
 python  src/mlm_predict.py roberta-base \
         COS484-data/validation.masked.removed.txt \
         COS484-results/roberta-base.validation.results.jsonl 
 
-BERT-Large
+BERT-Large:
 python  src/mlm_predict.py bert-large \
         COS484-data/validation.masked.removed.txt \
         COS484-results/bert-large.validation.results.jsonl 
 
-RoBERTa-Large
+RoBERTa-Large:
 python  src/mlm_predict.py roberta-large \
         COS484-data/validation.masked.removed.txt \
         COS484-results/roberta-large.validation.results.jsonl 
-```
-
-Note that `bert-base` can be replaced by any model name in `[bert-base, bert-large, roberta-base, roberta-large]`.
-
-For left-to-right language models:
-```bash
-python src/gpt_predict.py gpt \
-        data/test.core.masked.txt \
-        results/gpt.test.core.output.jsonl 
 ```
 
 ## Evaluating 
