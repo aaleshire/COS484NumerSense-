@@ -709,6 +709,7 @@ def main():
     if args.local_rank not in [-1, 0]:
         torch.distributed.barrier()  # Barrier to make sure only the first process in distributed training download model & vocab
 
+    print(args.config_name)
     if args.config_name:
         config = AutoConfig.from_pretrained(args.config_name, cache_dir=args.cache_dir)
     elif args.model_name_or_path:
