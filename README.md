@@ -93,16 +93,6 @@ python  src/mlm_predict.py roberta-large \
         COS484-results/roberta-large.validation.results.jsonl 
 ```
 
-## Evaluating 
-
-```bash
-python  COS484-functions/evaluator.py 
-        COS484-data/validation.masked.tsv 
-        COS484-results/gpt.validation.results.jsonl
-```
-repeat for COS484-results/bert-base.validation.results.jsonl, COS484-results/roberta-base.validation.results.jsonl, COS484-results/bert-large.validation.results.jsonl, and COS484-results/roberta-large.validation.results.jsonl
-
-
 ### Fine-tune a MLM model 
 ```bash
 mkdir saved_models
@@ -161,4 +151,36 @@ python  src/mlm_predict.py \
         COS484-data/validation.masked.removed.txt \
         COS484-results/uninit-bert.finetune.validation.results
 
+```
+
+
+## Evaluating
+```bash
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/gpt.validation.results.jsonl
+
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/bert-base.validation.results.jsonl
+
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/roberta-base.validation.results.jsonl
+
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/bert-large.validation.results.jsonl
+
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/roberta-large.validation.results.jsonl
+
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/bert-large.finetune.validation.results
+
+python  COS484-functions/evaluator.py 
+        COS484-data/validation.masked.tsv 
+        COS484-results/roberta-large.finetune.validation.results
 ```
