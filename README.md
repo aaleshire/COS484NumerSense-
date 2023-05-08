@@ -53,7 +53,6 @@ conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch -y
 
 pip install transformers==3.3.1
 pip install --editable happy-transformer
-pip install happy-transformer
 pip install tensorboardX
 
 
