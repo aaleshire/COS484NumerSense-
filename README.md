@@ -133,6 +133,10 @@ python  src/mlm_predict.py \
         COS484-results/roberta-large.finetune.validation.results
 ```
 
+### For DistilBERT Baselines and Finetuning (need Colab's GPU for it to be a reasonable amount of time though):
+```bash
+python COS484-functions/distilbert-code.py
+```
 
 ## Evaluating
 ```bash
