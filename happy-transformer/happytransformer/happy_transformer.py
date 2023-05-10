@@ -108,7 +108,7 @@ class HappyTransformer:
         softmax = self._get_prediction_softmax(tokenized_text)
 
         if options is not None:
-
+            
             if self.model_name == "BERT":
                 option_ids = [self.tokenizer.encode(option) for option in options]
 

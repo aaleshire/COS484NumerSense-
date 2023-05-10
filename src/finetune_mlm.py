@@ -49,7 +49,6 @@ from transformers import (
     get_linear_schedule_with_warmup,
 )
 
-
 try:
     from torch.utils.tensorboard import SummaryWriter
 except ImportError:
@@ -726,6 +725,7 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, cache_dir=args.cache_dir)
     elif args.model_name_or_path:
         tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
+        
     else:
         raise ValueError(
             "You are instantiating a new tokenizer from scratch. This is not supported, but you can do it from another script, save it,"

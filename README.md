@@ -16,136 +16,150 @@ Code & Data for EMNLP 2020 paper:
 ```
 
 ## Installation 
-
 ```bash
-conda create -n numersense python=3.7
+/**************************************/
+            INSTALL CONDA
+/**************************************/
+wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh
+chmod +x Miniconda3-py37_4.12.0-Linux-x86_64.sh
+bash ./Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -f -p /usr/local/
+
+conda install --channel defaults conda python=3.7 -y
+conda update -n base -c defaults conda -y
+conda create -n numersense python=3.7 -y
+
+
+/**************************************/
+        CONDA START ENVIRONMENT 
+/**************************************/
+sudo ln -s /opt/conda/root/etc/profile.d/conda.sh /etc/profile.d/conda.s 
+eval "$(/usr/local/condabin/conda shell.bash hook)"
+conda init bash
 conda activate numersense
-# install torch seperately at https://pytorch.org/get-started/locally/ if needed
-conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch -n numersense
+
+
+/**************************************/
+            CLONE INTO REPO 
+/**************************************/
+git clone https://github.com/aaleshire/COS484NumerSense-
+cd COS484NumerSense-
+git checkout redo 
+
+
+/**************************************/
+          INSTALLATIONS NEEDED 
+/**************************************/
+conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch -y
+
 pip install transformers==3.3.1
-# pip install happytransformer -U
 pip install --editable happy-transformer
 pip install tensorboardX
-mkdir pred_results
 
-# Optional:
-# Install apex following https://github.com/NVIDIA/apex#linux
-git clone https://github.com/NVIDIA/apex
-cd apex
-pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+
+/**************************************/
+        GITHUB CONFIGURATIONS 
+/**************************************/
+git config --global user.email "aleshire@princeton.edu"
+git config --global user.name "Abby Aleshire"
 ```
 
 ## Probing Experiments 
 
-For masked language models:
 ```bash
-python src/mlm_predict.py bert-base \
-        data/test.core.masked.txt \
-        results/bert-base.test.core.output.jsonl
+GPT-2:
+python  src/gpt_predict.py gpt \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/gpt.validation.results.jsonl 
 
-python src/mlm_predict.py bert-base \
-        data/test.all.masked.txt \
-        results/bert-base.test.all.output.jsonl
-```
+BERT-Base:
+python  src/mlm_predict.py bert-base \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/bert-base.validation.results.jsonl
 
-Note that `bert-base` can be replaced by any model name in `[bert-base, bert-large, roberta-base, roberta-large]`.
+RoBERTa-Base:
+python  src/mlm_predict.py roberta-base \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/roberta-base.validation.results.jsonl 
 
-For left-to-right language models:
-```bash
-python src/gpt_predict.py gpt \
-        data/test.core.masked.txt \
-        results/gpt.test.core.output.jsonl 
+BERT-Large:
+python  src/mlm_predict.py bert-large \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/bert-large.validation.results.jsonl 
+
+RoBERTa-Large:
+python  src/mlm_predict.py roberta-large \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/roberta-large.validation.results.jsonl 
 ```
 
 ### Fine-tune a MLM model 
 ```bash
 mkdir saved_models
+
+BERT-Large:
 CUDA_VISIBLE_DEVICES=0 python src/finetune_mlm.py \
   --output_dir=saved_models/finetuned_bert_large --overwrite_output_dir \
   --model_type=bert \
   --model_name_or_path=bert-large-uncased \
   --do_train \
-  --train_data_file=data/gkb_best_filtered.txt  \
-  --do_eval \
-  --eval_data_file=data/wiki_complete.txt \
+  --train_data_file=COS484-data/gkb_best_filtered.txt  \
   --per_gpu_train_batch_size 64 \
-  --per_gpu_eval_batch_size 64 \
   --block_size 64 \
   --logging_steps 100 \
   --num_train_epochs 3 \
   --line_by_line --mlm 
-```
 
-```bash 
-python src/mlm_infer.py \
+python  src/mlm_predict.py \
         reload_bert:saved_models/finetuned_bert_large \
-        data/test.core.masked.txt \
-        results/test.core.output.jsonl
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/bert-large.finetune.validation.results
+
+RoBERTa-Large:
+CUDA_VISIBLE_DEVICES=0 python src/finetune_mlm.py \
+  --output_dir=saved_models/finetuned_roberta_large --overwrite_output_dir \
+  --model_type=roberta \
+  --model_name_or_path=roberta-large \
+  --do_train \
+  --train_data_file=COS484-data/gkb_best_filtered.txt  \
+  --per_gpu_train_batch_size 64 \
+  --block_size 64 \
+  --logging_steps 100 \
+  --num_train_epochs 3 \
+  --line_by_line --mlm 
+
+python  src/mlm_predict.py \
+        reload_roberta:saved_models/finetuned_roberta_large \
+        COS484-data/validation.masked.removed.txt \
+        COS484-results/roberta-large.finetune.validation.results
 ```
 
-## Evaluation on Validation Set
 
-Check out `data/validation.masked.tsv`. We realease 200 annotated examples (132 from the `core` split and 68 from the `all` split) for method development so that users can better test their method frquently without submitting the prediction for the test set. **Note that these 200 examples should NOT be used for any training.** Also, they are still part of the the test data.
+## Evaluating
+```bash
+GPT-2:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/gpt.validation.results.jsonl
 
-## Evaluation on Test Set
+BERT-Base:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/bert-base.validation.results.jsonl
 
-To evaluate your model's ability on NumerSense's official test sets,
-please submit a prediction file to *yuchen.lin@usc.edu*, which should contain a json line for each probe example. And a json line should follow the format in the below code snippet. You can also check the example, `results/bert-base.test.core.output.jsonl` , which is the predictions of BERT-base on core set.
-The `score` key is optional.
-When submitting your predictions, please submit both `core` and `all` results, and inform us whether you have used the training data for fine-tuning. Thanks!
-The evaluation script we will use is `src/evaluator.py`.
- ```json
-{
-  "probe": "a bird has <mask> legs.",
-  "result_list": [
-    {
-      "word": "four",
-      "score": 0.23623309
-    },
-    {
-      "word": "two",
-      "score": 0.21001829
-    },
-    {
-      "word": "three",
-      "score": 0.1258428
-    },
-    {
-      "word": "no",
-      "score": 0.0688955
-    },
-    {
-      "word": "six",
-      "score": 0.0639159
-    },
-    {
-      "word": "five",
-      "score": 0.061465383
-    },
-    {
-      "word": "eight",
-      "score": 0.038915534
-    },
-    {
-      "word": "seven",
-      "score": 0.014524153
-    },
-    {
-      "word": "ten",
-      "score": 0.010337788
-    },
-    {
-      "word": "nine",
-      "score": 0.005654324
-    },
-    {
-      "word": "one",
-      "score": 1.3131318E-4
-    },
-    {
-      "word": "zero",
-      "score": 1.10984496E-4
-    }
-  ]
-}
- ```
+RoBERTa-Base:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-base.validation.results.jsonl
+
+BERT-Large:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/bert-large.validation.results.jsonl
+
+RoBERTa-Large:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-large.validation.results.jsonl
+
+BERT-Large-Finetuned:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/bert-large.finetune.validation.results
+
+RoBERTa-Large-Finetuned:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-large.finetune.validation.results
+
+DistilBERT:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/distilbert.validation.results.jsonl
+
+DistilBERT-Finetuned:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/distilbert.finetune.validation.results.jsonl 
+```
