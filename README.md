@@ -156,4 +156,10 @@ python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-r
 
 RoBERTa-Large-Finetuned:
 python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/roberta-large.finetune.validation.results
+
+DistilBERT:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/distilbert.validation.results.jsonl
+
+DistilBERT-Finetuned:
+python  COS484-functions/evaluator.py COS484-data/validation.masked.tsv COS484-results/distilbert.finetune.validation.results.jsonl 
 ```
